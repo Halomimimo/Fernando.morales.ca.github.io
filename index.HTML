@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Repositorio de Investigaciones</title>
+    <!-- Tailwind CSS para un diseño moderno y responsivo --><script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter para un look profesional --><link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Iconos de Lucide para una apariencia limpia --><script src="https://unpkg.com/lucide-react@latest/dist/lucide-react.js"></script>
+    <!-- PDF.js para visualizar PDFs --><script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js"></script>
+
+
+    <style>
+        /* Usamos la fuente Inter como fuente principal */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #EBEAE6; /* Gris cálido similar al de tu imagen */
+            color: #333333; /* Texto principal oscuro para contraste */
+        }
+        /* Pequeña animación para las tarjetas al pasar el mouse */
+        .publication-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+        }
+        /* Estilos para el canvas del PDF para evitar que se vea borroso */
+        #pdf-render {
+            width: 100%;
+            height: auto;
+        }
+        /* Clases de Tailwind personalizadas para el color de acento */
+        .bg-accent { background-color: #D15B32; } /* Naranja rojizo */
+        .hover\:bg-accent-dark:hover { background-color: #B54A28; } /* Naranja rojizo más oscuro al pasar el mouse */
+        .text-accent { color: #D15B32; }
+        .hover\:text-accent-dark:hover { color: #B54A28; }
+        .border-accent { border-color: #D15B32; }
+        .ring-accent:focus { ring-color: #D15B32; }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <!-- Contenedor principal --><div class="container mx-auto max-w-4xl px-4 py-8 md:py-12">
+
+        <!-- Encabezado con tu nombre y la sección de carga --><header class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-900">Fernando Morales Calleja</h1>
+                <p class="text-md text-gray-600 mt-1">Licenciado en Economía</p>
+                <div class="flex items-center text-gray-600 mt-2 text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2 opacity-80"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                    <a href="mailto:fernandomc052000@gmail.com" class="hover:underline">fernandomc052000@gmail.com</a>
+                </div>
+                <div class="flex items-center space-x-4 text-gray-600 mt-3">
+                    <a href="https://www.linkedin.com/in/fernando-morales-calleja" target="_blank" rel="noopener noreferrer" class="hover:text-accent transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
+                    </a>
+                    <a href="#" target="_blank" rel="noopener noreferrer" class="hover:text-accent transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                    </a>
+                </div>
+            </div>
+            <!-- Botón para abrir modal de carga --><button id="openUploadModalButton" class="mt-4 sm:mt-0 flex items-center bg-accent text-white font-medium px-4 py-2 rounded-lg shadow-sm hover:bg-accent-dark transition-colors duration-300">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+                Cargar Publicación
+            </button>
+        </header>
+        
+        <!-- Sección "Acerca de mí" -->
+        <section class="mb-12 bg-white/50 p-6 rounded-lg border border-gray-200">
+             <h2 class="text-xl font-semibold mb-3 text-gray-800">Acerca de mí</h2>
+             <p class="text-gray-700 leading-relaxed">
+                Economista especializado en análisis de datos y gestión financiera, con experiencia en los sectores público y privado. Experto en la optimización del presupuesto, utilizando SIAF para la elaboración y modificación presupuestaria en el sector público, y Power BI e IBM Planning Analytics para la mejora en la precisión de informes financieros en el sector privado. Busco aplicar mis habilidades en Python, STATA, análisis de precios y gestión de contratos con proveedores para impulsar decisiones estratégicas y el éxito financiero de la organización.
+             </p>
+        </section>
+
+        <!-- Sección principal donde se mostrarán las publicaciones --><main>
+            <h2 class="text-xl font-semibold border-b border-gray-300 pb-2 mb-6 text-gray-800">Publicaciones</h2>
+            
+            <!-- Contenedor de la lista de publicaciones --><div id="publicationsList" class="space-y-6">
+                <!-- Las publicaciones cargadas se añadirán aquí dinámicamente --></div>
+
+             <!-- Mensaje cuando no hay publicaciones --><div id="emptyState" class="text-center py-16">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="mx-auto text-gray-400"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+                <p class="mt-4 text-gray-600">Aún no has subido ninguna publicación.</p>
+                <p class="text-sm text-gray-500">Usa el botón "Cargar Publicación" para empezar.</p>
+            </div>
+        </main>
+
+        <!-- Pie de página --><footer class="text-center mt-12 pt-6 border-t border-gray-300">
+            <p class="text-sm text-gray-600">&copy; <span id="currentYear"></span> Fernando Morales Calleja. Todos los derechos reservados.</p>
+        </footer>
+    </div>
+
+    <!-- Modal para Añadir/Editar Publicación -->
+    <div id="upload-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white rounded-lg shadow-2xl w-full max-w-lg flex flex-col max-h-[90vh]">
+            <div class="flex justify-between items-center p-4 border-b">
+                <h3 id="modal-title" class="font-semibold text-lg">Nueva Publicación</h3>
+                <button id="close-upload-modal" class="text-gray-500 hover:text-gray-800 text-3xl leading-none">&times;</button>
+            </div>
+            <form id="upload-form" class="p-6 space-y-4 overflow-y-auto">
+                <input type="hidden" id="pub-id" name="id">
+                <div>
+                    <label for="pub-title" class="block text-sm font-medium text-gray-700">Título</label>
+                    <input type="text" id="pub-title" name="title" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-accent focus:ring-accent sm:text-sm" required>
+                </div>
+                <div>
+                    <label for="pub-comments" class="block text-sm font-medium text-gray-700">Comentarios / Descripción</label>
+                    <textarea id="pub-comments" name="comments" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-accent focus:ring-accent sm:text-sm"></textarea>
+                </div>
+                 <div>
+                    <label class="block text-sm font-medium text-gray-700">Imagen de Portada (Opcional)</label>
+                    <div id="current-image-info" class="text-xs text-gray-500 mt-1"></div>
+                    <input type="file" id="pub-image" name="image" accept="image/*" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-accent/10 file:text-accent hover:file:bg-accent/20">
+                </div>
+                <fieldset>
+                    <legend class="text-sm font-medium text-gray-700">Tipo de Recurso</legend>
+                    <div class="mt-2 space-y-2">
+                        <div class="flex items-center">
+                            <input id="type-pdf" name="pub-type" type="radio" value="pdf" class="h-4 w-4 border-gray-300 text-accent focus:ring-accent" checked>
+                            <label for="type-pdf" class="ml-3 block text-sm font-medium text-gray-700">Archivo PDF</label>
+                        </div>
+                        <div id="pdf-input-container">
+                            <div id="current-pdf-info" class="text-xs text-gray-500 mt-1"></div>
+                             <input type="file" id="pub-pdf" name="pdf" accept=".pdf" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-accent/10 file:text-accent hover:file:bg-accent/20">
+                        </div>
+                        <div class="flex items-center">
+                            <input id="type-link" name="pub-type" type="radio" value="link" class="h-4 w-4 border-gray-300 text-accent focus:ring-accent">
+                            <label for="type-link" class="ml-3 block text-sm font-medium text-gray-700">Enlace Externo</label>
+                        </div>
+                        <div id="link-input-container" class="hidden">
+                            <input type="url" id="pub-link" name="link" placeholder="https://ejemplo.com" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-accent focus:ring-accent sm:text-sm">
+                        </div>
+                    </div>
+                </fieldset>
+                <div class="pt-4 flex justify-end">
+                    <button id="modal-submit-button" type="submit" class="bg-accent text-white font-medium px-4 py-2 rounded-lg shadow-sm hover:bg-accent-dark transition-colors duration-300">Publicar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- Modal del Visor de PDF --><div id="pdf-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white rounded-lg shadow-2xl w-full max-w-4xl h-[90vh] flex flex-col">
+            <div class="flex justify-between items-center p-4 border-b border-gray-200">
+                <h3 id="pdf-title" class="font-semibold text-lg truncate text-gray-900"></h3>
+                <button id="close-pdf-modal" class="text-gray-500 hover:text-gray-800 text-3xl leading-none">&times;</button>
+            </div>
+            <div class="flex-grow p-4 overflow-auto bg-gray-100 flex justify-center items-start">
+                <canvas id="pdf-render"></canvas>
+            </div>
+            <div class="flex justify-center items-center p-2 border-t border-gray-200 bg-gray-50">
+                <button id="prev-page" class="px-3 py-1 rounded-md hover:bg-gray-200 disabled:opacity-50 text-gray-700" disabled>&lt;</button>
+                <span class="mx-4 text-sm text-gray-700">Página <span id="page-num"></span> de <span id="page-count"></span></span>
+                <button id="next-page" class="px-3 py-1 rounded-md hover:bg-gray-200 disabled:opacity-50 text-gray-700" disabled>&gt;</button>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            let publications = [];
+            const publicationsList = document.getElementById('publicationsList');
+            const emptyState = document.getElementById('emptyState');
+            const STORAGE_KEY = 'my-professional-repo';
+
+            // --- Lógica de Datos (Cargar, Guardar, Eliminar) ---
+            const savePublications = () => {
+                try {
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(publications));
+                } catch (e) {
+                    console.error("Error al guardar en localStorage:", e);
+                    alert("No se pudieron guardar los cambios. El almacenamiento puede estar lleno.");
+                }
+            };
+
+            const loadPublications = () => {
+                const savedData = localStorage.getItem(STORAGE_KEY);
+                if (savedData) {
+                    publications = JSON.parse(savedData);
+                }
+                renderAllPublications();
+            };
+            
+            const deletePublication = (id) => {
+                publications = publications.filter(pub => pub.id !== id);
+                savePublications();
+                renderAllPublications();
+            };
+
+            const renderAllPublications = () => {
+                publicationsList.innerHTML = '';
+                publications.forEach(renderPublication);
+                updateEmptyState();
+            };
+            
+            const updateEmptyState = () => {
+                emptyState.style.display = publications.length > 0 ? 'none' : 'block';
+            };
+
+
+            // --- Lógica del Modal de Carga/Edición ---
+            const uploadModal = document.getElementById('upload-modal');
+            const openUploadModalButton = document.getElementById('openUploadModalButton');
+            const closeUploadModalButton = document.getElementById('close-upload-modal');
+            const uploadForm = document.getElementById('upload-form');
+            const modalTitle = document.getElementById('modal-title');
+            const modalSubmitButton = document.getElementById('modal-submit-button');
+            const pubIdInput = document.getElementById('pub-id');
+            const pubTitleInput = document.getElementById('pub-title');
+            const pubCommentsInput = document.getElementById('pub-comments');
+            const pubLinkInput = document.getElementById('pub-link');
+            const pdfInputContainer = document.getElementById('pdf-input-container');
+            const linkInputContainer = document.getElementById('link-input-container');
+            
+            const resetAndOpenUploadModal = (pubToEdit = null) => {
+                uploadForm.reset();
+                pdfInputContainer.classList.remove('hidden');
+                linkInputContainer.classList.add('hidden');
+                document.getElementById('current-image-info').textContent = '';
+                document.getElementById('current-pdf-info').textContent = '';
+
+                if (pubToEdit) { // Modo Edición
+                    modalTitle.textContent = 'Modificar Publicación';
+                    modalSubmitButton.textContent = 'Guardar Cambios';
+                    pubIdInput.value = pubToEdit.id;
+                    pubTitleInput.value = pubToEdit.title;
+                    pubCommentsInput.value = pubToEdit.comments;
+
+                    if (pubToEdit.externalLink) {
+                        document.getElementById('type-link').checked = true;
+                        pubLinkInput.value = pubToEdit.externalLink;
+                        pdfInputContainer.classList.add('hidden');
+                        linkInputContainer.classList.remove('hidden');
+                    } else {
+                        document.getElementById('type-pdf').checked = true;
+                    }
+                    
+                    if (pubToEdit.image) document.getElementById('current-image-info').textContent = 'Hay una imagen cargada. Sube otra para reemplazarla.';
+                    if (pubToEdit.pdf) document.getElementById('current-pdf-info').textContent = 'Hay un PDF cargado. Sube otro para reemplazarlo.';
+
+                } else { // Modo Creación
+                    modalTitle.textContent = 'Nueva Publicación';
+                    modalSubmitButton.textContent = 'Publicar';
+                    pubIdInput.value = '';
+                }
+                uploadModal.classList.remove('hidden');
+            };
+
+            openUploadModalButton.addEventListener('click', () => resetAndOpenUploadModal());
+            closeUploadModalButton.addEventListener('click', () => uploadModal.classList.add('hidden'));
+            
+            document.querySelectorAll('input[name="pub-type"]').forEach(radio => {
+                radio.addEventListener('change', (e) => {
+                    pdfInputContainer.classList.toggle('hidden', e.target.value !== 'pdf');
+                    linkInputContainer.classList.toggle('hidden', e.target.value !== 'link');
+                });
+            });
+
+            const readFileAsBase64 = (file) => {
+                return new Promise((resolve) => {
+                    if (!file || file.size === 0) return resolve(null);
+                    const reader = new FileReader();
+                    reader.onload = () => resolve(reader.result);
+                    reader.onerror = () => resolve(null);
+                    reader.readAsDataURL(file);
+                });
+            };
+
+            uploadForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const formData = new FormData(uploadForm);
+                const id = Number(formData.get('id'));
+
+                const imageFile = formData.get('image');
+                const pdfFile = formData.get('pub-type') === 'pdf' ? formData.get('pdf') : null;
+
+                const [imageBase64, pdfBase64] = await Promise.all([
+                    readFileAsBase64(imageFile),
+                    readFileAsBase64(pdfFile)
+                ]);
+
+                if (id) { // Actualizar publicación existente
+                    const pubIndex = publications.findIndex(p => p.id === id);
+                    if (pubIndex !== -1) {
+                        const pub = publications[pubIndex];
+                        pub.title = formData.get('title');
+                        pub.comments = formData.get('comments');
+                        pub.externalLink = formData.get('pub-type') === 'link' ? formData.get('link') : null;
+                        if (imageBase64) pub.image = imageBase64;
+                        if (pdfBase64) pub.pdf = pdfBase64;
+                        if (pub.externalLink) pub.pdf = null; // Si es un link, borramos el PDF
+                    }
+                } else { // Crear nueva publicación
+                    const newPublication = {
+                        id: Date.now(),
+                        title: formData.get('title'),
+                        comments: formData.get('comments'),
+                        date: new Date().toISOString(),
+                        image: imageBase64,
+                        pdf: pdfBase64,
+                        externalLink: formData.get('pub-type') === 'link' ? formData.get('link') : null,
+                    };
+                    publications.unshift(newPublication);
+                }
+                
+                savePublications();
+                renderAllPublications();
+                uploadModal.classList.add('hidden');
+            });
+
+
+            // --- Lógica del Visor de PDF ---
+            const pdfModal = document.getElementById('pdf-modal');
+            const pdfTitle = document.getElementById('pdf-title');
+            const closePdfModalBtn = document.getElementById('close-pdf-modal');
+            const pdfCanvas = document.getElementById('pdf-render');
+            const pageNumSpan = document.getElementById('page-num');
+            const pageCountSpan = document.getElementById('page-count');
+            const prevPageBtn = document.getElementById('prev-page');
+            const nextPageBtn = document.getElementById('next-page');
+            
+            const { pdfjsLib } = window;
+            if (pdfjsLib) {
+               pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.worker.min.js`;
+            }
+
+            let pdfDoc = null;
+            let pageNum = 1;
+            let pageRendering = false;
+            let pageNumPending = null;
+            const scale = 1.5;
+            const ctx = pdfCanvas.getContext('2d');
+
+            function renderPage(num) {
+                pageRendering = true;
+                if (!pdfDoc) return;
+                pdfDoc.getPage(num).then((page) => {
+                    const viewport = page.getViewport({ scale });
+                    pdfCanvas.height = viewport.height;
+                    pdfCanvas.width = viewport.width;
+                    const renderContext = { canvasContext: ctx, viewport: viewport };
+                    page.render(renderContext).promise.then(() => {
+                        pageRendering = false;
+                        if (pageNumPending !== null) {
+                            renderPage(pageNumPending);
+                            pageNumPending = null;
+                        }
+                    });
+                });
+                pageNumSpan.textContent = num;
+                prevPageBtn.disabled = num <= 1;
+                nextPageBtn.disabled = num >= pdfDoc.numPages;
+            }
+
+            function queueRenderPage(num) {
+                if (pageRendering) { pageNumPending = num; } else { renderPage(num); }
+            }
+            
+            prevPageBtn.addEventListener('click', () => { if (pageNum > 1) { pageNum--; queueRenderPage(pageNum); } });
+            nextPageBtn.addEventListener('click', () => { if (pageNum < pdfDoc.numPages) { pageNum++; queueRenderPage(pageNum); } });
+            
+            function showModalWithPdf(url, title) {
+                pdfTitle.textContent = "Cargando...";
+                pdfModal.classList.remove('hidden');
+                pdfjsLib.getDocument(url).promise.then(pdfDoc_ => {
+                    pdfDoc = pdfDoc_;
+                    pageCountSpan.textContent = pdfDoc.numPages;
+                    pageNum = 1;
+                    renderPage(pageNum);
+                    pdfTitle.textContent = title;
+                }).catch(err => {
+                    console.error(`Error al cargar el PDF:`, err);
+                    pdfTitle.textContent = "Error al Cargar PDF";
+                    setTimeout(closePdfModal, 1500);
+                });
+            }
+
+            function closePdfModal() {
+                pdfModal.classList.add('hidden');
+                pdfDoc = null;
+                if (ctx) ctx.clearRect(0, 0, pdfCanvas.width, pdfCanvas.height);
+            }
+
+            closePdfModalBtn.addEventListener('click', closePdfModal);
+            pdfModal.addEventListener('click', (e) => { if (e.target === pdfModal) closePdfModal(); });
+
+            // --- Lógica de Eventos Globales y Renderizado ---
+            document.body.addEventListener('click', (e) => {
+                if (!e.target.closest('.publication-actions')) {
+                    document.querySelectorAll('.options-menu').forEach(menu => menu.classList.add('hidden'));
+                }
+            }, true);
+
+            publicationsList.addEventListener('click', (e) => {
+                const viewButton = e.target.closest('.view-pdf-button');
+                const deleteButton = e.target.closest('.delete-button');
+                const editButton = e.target.closest('.edit-button');
+                const optionsButton = e.target.closest('.options-button');
+
+                if (viewButton) {
+                    e.preventDefault();
+                    showModalWithPdf(viewButton.dataset.pdfUrl, viewButton.dataset.title);
+                } else if (deleteButton) {
+                    e.preventDefault();
+                    // Opcional: añadir un modal de confirmación personalizado en el futuro.
+                    deletePublication(Number(deleteButton.dataset.id));
+                } else if (editButton) {
+                    e.preventDefault();
+                    const pubToEdit = publications.find(p => p.id === Number(editButton.dataset.id));
+                    if (pubToEdit) resetAndOpenUploadModal(pubToEdit);
+                } else if (optionsButton) {
+                    e.preventDefault();
+                    const menu = optionsButton.nextElementSibling;
+                    const isHidden = menu.classList.contains('hidden');
+                    document.querySelectorAll('.options-menu').forEach(m => m.classList.add('hidden'));
+                    if(isHidden) menu.classList.remove('hidden');
+                }
+            });
+
+            const renderPublication = (data) => {
+                const formattedDate = new Date(data.date).toLocaleDateString('es-ES', {
+                    day: '2-digit', month: 'long', year: 'numeric'
+                });
+
+                const publicationElement = document.createElement('div');
+                publicationElement.className = 'publication-card relative bg-white p-6 rounded-lg shadow-sm border border-gray-200 transition-all duration-300 animate-fade-in';
+                
+                const imageHTML = data.image ? `<img src="${data.image}" alt="Vista previa de ${data.title}" class="mb-4 rounded-md object-cover w-full h-48">` : '';
+
+                let actionLinkHTML = '';
+                if(data.pdf){
+                     actionLinkHTML = `<a href="#" class="view-pdf-button inline-flex items-center text-accent font-medium hover:text-accent-dark transition-colors duration-300" data-pdf-url="${data.pdf}" data-title="${data.title}">
+                        Ver PDF
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="ml-1"><line x1="5" x2="19" y1="12" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                    </a>`;
+                } else if(data.externalLink){
+                    actionLinkHTML = `<a href="${data.externalLink}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center text-accent font-medium hover:text-accent-dark transition-colors duration-300">
+                        Ver Enlace
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="ml-1.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></svg>
+                    </a>`;
+                }
+
+                const optionsHTML = `
+                    <div class="absolute top-4 right-4 publication-actions">
+                        <button class="options-button text-gray-500 hover:text-gray-800 p-1 rounded-full hover:bg-gray-100">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+                        </button>
+                        <div class="options-menu absolute right-0 mt-2 w-40 bg-white rounded-md shadow-lg z-10 hidden border">
+                            <a href="#" class="edit-button block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" data-id="${data.id}">Modificar</a>
+                            <a href="#" class="delete-button block px-4 py-2 text-sm text-red-600 hover:bg-gray-100" data-id="${data.id}">Eliminar</a>
+                        </div>
+                    </div>`;
+                
+                publicationElement.innerHTML = `
+                    ${optionsHTML}
+                    ${imageHTML}
+                    <p class="text-sm text-gray-500 mb-1">${formattedDate}</p>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">${data.title}</h3>
+                    <p class="text-gray-600 mb-4 text-sm leading-relaxed whitespace-pre-wrap">${data.comments || 'Sin descripción.'}</p>
+                    ${actionLinkHTML}
+                `;
+                
+                publicationsList.appendChild(publicationElement);
+            };
+
+            // --- Inicialización ---
+            document.getElementById('currentYear').textContent = new Date().getFullYear();
+            loadPublications();
+        });
+    </script>
+    
+    <style>
+        @keyframes fade-in {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in { animation: fade-in 0.5s ease-out forwards; }
+    </style>
+
+</body>
+</html>
+
+
